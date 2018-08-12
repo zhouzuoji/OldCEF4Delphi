@@ -1,0 +1,233 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{A89177DA-4AE7-4D3C-8805-EED67AEEED1F}</ProjectGuid>
+			<MainSource>OldCEF4Delphi_D2010.dpk</MainSource>
+			<Config Condition="'$(Config)'==''">Release</Config>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<ProjectVersion>12.0</ProjectVersion>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DesignOnlyPackage>false</DesignOnlyPackage>
+			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\OldCEF4Delphi_D2010.bpl</DCC_DependencyCheckOutputName>
+			<DCC_Description>OldCEF4Delphi</DCC_Description>
+			<GenPackage>true</GenPackage>
+			<DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
+			<GenDll>true</GenDll>
+			<DCC_ExeOutput>..\bin</DCC_ExeOutput>
+			<DCC_DcuOutput>.\lib\D2010</DCC_DcuOutput>
+			<DCC_UnitSearchPath>..\..\..\MyLibrary\DelphiServerLibrary\src;..\..\..\MyLibrary\common\src;..\..\..\MyLibrary\DelphiServerLibrary\src\winapi;..\..\..\MyLibrary\DelphiServerLibrary\src\zlib;..\..\..\MyLibrary\DelphiServerLibrary\src\winsock2;..\..\..\MyLibrary\DelphiServerLibrary\src\sqlite3;..\..\..\library\JsonDataObjects\source;..\..\..\MyLibrary\DelphiServerLibrary\src\OpenSSL;..\..\..\MyLibrary\DelphiServerLibrary\src\crtl;..\..\..\MyLibrary\DelphiServerLibrary\src\pcre;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;WinTypes=Windows;WinProcs=Windows;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
+			<DCC_Platform>x86</DCC_Platform>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="OldCEF4Delphi_D2010.dpk">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="rtl.dcp"/>
+			<DCCReference Include="vcl.dcp"/>
+			<DCCReference Include="OldCEF4Delphi_Register.pas"/>
+			<DCCReference Include="..\source\uCEFFindHandler.pas"/>
+			<DCCReference Include="..\source\uCEFConstants.pas"/>
+			<DCCReference Include="..\source\uCEFTypes.pas"/>
+			<DCCReference Include="..\source\uCEFInterfaces.pas"/>
+			<DCCReference Include="..\source\uCEFMiscFunctions.pas"/>
+			<DCCReference Include="..\source\uCEFLibFunctions.pas"/>
+			<DCCReference Include="..\source\uCEFApplication.pas"/>
+			<DCCReference Include="..\source\uCEFSchemeRegistrar.pas"/>
+			<DCCReference Include="..\source\uCEFCommandLine.pas"/>
+			<DCCReference Include="..\source\uCEFClient.pas"/>
+			<DCCReference Include="..\source\uCEFProcessMessage.pas"/>
+			<DCCReference Include="..\source\uCEFBrowser.pas"/>
+			<DCCReference Include="..\source\uCEFListValue.pas"/>
+			<DCCReference Include="..\source\uCEFBinaryValue.pas"/>
+			<DCCReference Include="..\source\uCEFValue.pas"/>
+			<DCCReference Include="..\source\uCEFDictionaryValue.pas"/>
+			<DCCReference Include="..\source\uCEFFrame.pas"/>
+			<DCCReference Include="..\source\uCEFPDFPrintCallback.pas"/>
+			<DCCReference Include="..\source\uCEFRunFileDialogCallback.pas"/>
+			<DCCReference Include="..\source\uCEFRequestContext.pas"/>
+			<DCCReference Include="..\source\uCEFNavigationEntryVisitor.pas"/>
+			<DCCReference Include="..\source\uCEFStringVisitor.pas"/>
+			<DCCReference Include="..\source\uCEFv8Context.pas"/>
+			<DCCReference Include="..\source\uCEFDomVisitor.pas"/>
+			<DCCReference Include="..\source\uCEFNavigationEntry.pas"/>
+			<DCCReference Include="..\source\uCEFCookieManager.pas"/>
+			<DCCReference Include="..\source\uCEFCompletionCallback.pas"/>
+			<DCCReference Include="..\source\uCEFRequestContextHandler.pas"/>
+			<DCCReference Include="..\source\uCEFWebPluginInfo.pas"/>
+			<DCCReference Include="..\source\uCEFDomDocument.pas"/>
+			<DCCReference Include="..\source\uCEFDomNode.pas"/>
+			<DCCReference Include="..\source\uCEFv8Value.pas"/>
+			<DCCReference Include="..\source\uCEFv8Accessor.pas"/>
+			<DCCReference Include="..\source\uCEFLoadHandler.pas"/>
+			<DCCReference Include="..\source\uCEFFocusHandler.pas"/>
+			<DCCReference Include="..\source\uCEFContextMenuHandler.pas"/>
+			<DCCReference Include="..\source\uCEFDialogHandler.pas"/>
+			<DCCReference Include="..\source\uCEFKeyboardHandler.pas"/>
+			<DCCReference Include="..\source\uCEFDisplayHandler.pas"/>
+			<DCCReference Include="..\source\uCEFDownloadHandler.pas"/>
+			<DCCReference Include="..\source\uCEFJsDialogHandler.pas"/>
+			<DCCReference Include="..\source\uCEFLifeSpanHandler.pas"/>
+			<DCCReference Include="..\source\uCEFRequestHandler.pas"/>
+			<DCCReference Include="..\source\uCEFRenderHandler.pas"/>
+			<DCCReference Include="..\source\uCEFDragHandler.pas"/>
+			<DCCReference Include="..\source\uCEFPostData.pas"/>
+			<DCCReference Include="..\source\uCEFPostDataElement.pas"/>
+			<DCCReference Include="..\source\uCEFRequest.pas"/>
+			<DCCReference Include="..\source\uCEFStreamReader.pas"/>
+			<DCCReference Include="..\source\uCEFWriteHandler.pas"/>
+			<DCCReference Include="..\source\uCEFStreamWriter.pas"/>
+			<DCCReference Include="..\source\uCEFv8StackFrame.pas"/>
+			<DCCReference Include="..\source\uCEFv8StackTrace.pas"/>
+			<DCCReference Include="..\source\uCEFv8Handler.pas"/>
+			<DCCReference Include="..\source\uCEFRequestCallback.pas"/>
+			<DCCReference Include="..\source\uCEFCustomStreamReader.pas"/>
+			<DCCReference Include="..\source\uCEFCallback.pas"/>
+			<DCCReference Include="..\source\uCEFResourceHandler.pas"/>
+			<DCCReference Include="..\source\uCEFSchemeHandlerFactory.pas"/>
+			<DCCReference Include="..\source\uCEFTask.pas"/>
+			<DCCReference Include="..\source\uCEFTaskRunner.pas"/>
+			<DCCReference Include="..\source\uCEFStringMap.pas"/>
+			<DCCReference Include="..\source\uCEFStringMultimap.pas"/>
+			<DCCReference Include="..\source\uCEFXmlReader.pas"/>
+			<DCCReference Include="..\source\uCEFZipReader.pas"/>
+			<DCCReference Include="..\source\uCEFResponse.pas"/>
+			<DCCReference Include="..\source\uCEFCookieVisitor.pas"/>
+			<DCCReference Include="..\source\uCEFV8Exception.pas"/>
+			<DCCReference Include="..\source\uCEFResourceBundleHandler.pas"/>
+			<DCCReference Include="..\source\uCEFSetCookieCallback.pas"/>
+			<DCCReference Include="..\source\uCEFDeleteCookiesCallback.pas"/>
+			<DCCReference Include="..\source\uCEFDownLoadItem.pas"/>
+			<DCCReference Include="..\source\uCEFBeforeDownloadCallback.pas"/>
+			<DCCReference Include="..\source\uCEFDownloadItemCallback.pas"/>
+			<DCCReference Include="..\source\uCEFAuthCallback.pas"/>
+			<DCCReference Include="..\source\uCEFJsDialogCallback.pas"/>
+			<DCCReference Include="..\source\uCEFContextMenuParams.pas"/>
+			<DCCReference Include="..\source\uCEFMenuModel.pas"/>
+			<DCCReference Include="..\source\uCEFBrowserProcessHandler.pas"/>
+			<DCCReference Include="..\source\uCEFRenderProcessHandler.pas"/>
+			<DCCReference Include="..\source\uCEFUrlrequestClient.pas"/>
+			<DCCReference Include="..\source\uCEFUrlRequest.pas"/>
+			<DCCReference Include="..\source\uCEFWebPluginInfoVisitor.pas"/>
+			<DCCReference Include="..\source\uCEFWebPluginUnstableCallback.pas"/>
+			<DCCReference Include="..\source\uCEFEndTracingCallback.pas"/>
+			<DCCReference Include="..\source\uCEFFileDialogCallback.pas"/>
+			<DCCReference Include="..\source\uCEFDragData.pas"/>
+			<DCCReference Include="..\source\uCEFResolveCallback.pas"/>
+			<DCCReference Include="..\source\uCEFPrintSettings.pas"/>
+			<DCCReference Include="..\source\uCEFSslInfo.pas"/>
+			<DCCReference Include="..\source\uCEFRunContextMenuCallback.pas"/>
+			<DCCReference Include="..\source\uCEFResourceBundle.pas"/>
+			<DCCReference Include="..\source\uCEFResponseFilter.pas"/>
+			<DCCReference Include="..\source\uCEFv8Types.pas"/>
+			<DCCReference Include="..\source\uCEFWindowParent.pas"/>
+			<DCCReference Include="..\source\uCEFChromium.pas"/>
+			<DCCReference Include="..\source\uCEFChromiumEvents.pas"/>
+			<DCCReference Include="..\source\uCEFChromiumOptions.pas"/>
+			<DCCReference Include="..\source\uCEFChromiumFontOptions.pas"/>
+			<DCCReference Include="..\source\uCEFPDFPrintOptions.pas"/>
+			<DCCReference Include="..\source\uCEFChromiumWindow.pas"/>
+			<DCCReference Include="..\source\uCEFBase.pas"/>
+			<DCCReference Include="..\source\uOLEDragAndDrop.pas"/>
+			<DCCReference Include="..\source\uCEFDragAndDropMgr.pas"/>
+			<DCCReference Include="..\source\uBufferPanel.pas"/>
+			<DCCReference Include="..\source\uCEFApp.pas"/>
+			<DCCReference Include="..\source\uCEFWorkScheduler.pas"/>
+			<DCCReference Include="..\source\uCEFWorkSchedulerThread.pas"/>
+			<DCCReference Include="..\source\uCEFStringList.pas"/>
+			<DCCReference Include="..\source\uCEFGeolocationCallback.pas"/>
+			<DCCReference Include="..\source\uCEFGeolocationHandler.pas"/>
+			<DCCReference Include="..\source\uCEFSslCertPrincipal.pas"/>
+			<DCCReference Include="..\source\uCEFView.pas"/>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType>Package</Borland.ProjectType>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Source>
+						<Source Name="MainSource">OldCEF4Delphi_D2010.dpk</Source>
+					</Source>
+					<Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription">OldCEF4Delphi</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName">OldCEF4Delphi</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName">OldCEF4Delphi</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+						<VersionInfoKeys Name="LastCompiledTime">2018/04/17 11:36:51</VersionInfoKeys>
+						<VersionInfoKeys Name="ProgramID">com.embarcadero.OldCEF4Delphi</VersionInfoKeys>
+					</VersionInfoKeys>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dclwebsnap140.bpl">Embarcadero WebSnap Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dclnet140.bpl">Embarcadero Internet Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dclsoap140.bpl">Embarcadero SOAP Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\bcboffice2k140.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\bcbofficexp140.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dcloffice2k140.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dclofficexp140.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
+				</Delphi.Personality>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>

@@ -10,7 +10,7 @@
 // For more information about OldCEF4Delphi visit :
 //         https://www.briskbard.com/index.php?lang=en&pageid=cef
 //
-//        Copyright © 2018 Salvador Díaz Fau. All rights reserved.
+//        Copyright ?2018 Salvador Díaz Fau. All rights reserved.
 //
 // ************************************************************************
 // ************ vvvv Original license and comments below vvvv *************
@@ -77,6 +77,7 @@ type
       FCustomFlashPath               : ustring;
       FLogSeverity                   : TCefLogSeverity;
       FJavaScriptFlags               : ustring;
+      FFrameworkDirPath              : ustring;
       FResourcesDirPath              : ustring;
       FLocalesDirPath                : ustring;
       FSingleProcess                 : Boolean;
@@ -155,6 +156,7 @@ type
       procedure SetCookies(const aValue : ustring);
       procedure SetUserDataPath(const aValue : ustring);
       procedure SetBrowserSubprocessPath(const aValue : ustring);
+      procedure SetFrameworkDirPath(const aValue: ustring);
       procedure SetResourcesDirPath(const aValue : ustring);
       procedure SetLocalesDirPath(const aValue : ustring);
       procedure SetOsmodalLoop(aValue : boolean);
@@ -214,7 +216,6 @@ type
       function  FindFlashDLL(var aFileName : string) : boolean;
       procedure ShowErrorMessageDlg(const aError : string); virtual;
       function  ParseProcessType : TCefProcessType;
-
     public
       constructor Create;
       destructor  Destroy; override;
@@ -259,6 +260,7 @@ type
       property BrowserSubprocessPath             : ustring                             read FBrowserSubprocessPath             write SetBrowserSubprocessPath;
       property LogSeverity                       : TCefLogSeverity                     read FLogSeverity                       write FLogSeverity;
       property JavaScriptFlags                   : ustring                             read FJavaScriptFlags                   write FJavaScriptFlags;
+      property FrameworkDirPath                  : ustring                             read FFrameworkDirPath                  write SetFrameworkDirPath;
       property ResourcesDirPath                  : ustring                             read FResourcesDirPath                  write SetResourcesDirPath;
       property LocalesDirPath                    : ustring                             read FLocalesDirPath                    write SetLocalesDirPath;
       property SingleProcess                     : Boolean                             read FSingleProcess                     write FSingleProcess;
@@ -374,6 +376,7 @@ begin
   FCustomFlashPath               := '';
   FLogSeverity                   := LOGSEVERITY_DISABLE;
   FJavaScriptFlags               := '';
+  FFrameworkDirPath              := '';
   FResourcesDirPath              := '';
   FLocalesDirPath                := '';
   FSingleProcess                 := False;
@@ -537,7 +540,10 @@ end;
 
 function TCefApplication.GetLibCefPath : string;
 begin
-  Result := LIBCEF_DLL;
+  if FFrameworkDirPath='' then
+    Result := LIBCEF_DLL
+  else
+    Result := IncludeTrailingPathDelimiter(FFrameworkDirPath) + LIBCEF_DLL;
 end;
 
 procedure TCefApplication.SetCache(const aValue : ustring);
@@ -599,44 +605,39 @@ begin
     FBrowserSubprocessPath := '';
 end;
 
-procedure TCefApplication.SetResourcesDirPath(const aValue : ustring);
+function checkAndSetPath(const newPath: string; const def: string = ''): string;
 var
   TempPath : string;
 begin
-  if (length(aValue) > 0) then
+  if (length(newPath) > 0) then
     begin
-      if CustomPathIsRelative(aValue) then
-        TempPath := GetModulePath + aValue
+      if CustomPathIsRelative(newPath) then
+        TempPath := GetModulePath + newPath
        else
-        TempPath := aValue;
+        TempPath := newPath;
 
       if DirectoryExists(TempPath) then
-        FResourcesDirPath := TempPath
+        Result := TempPath
        else
-        FResourcesDirPath := '';
+        Result := def;
     end
    else
-    FResourcesDirPath := '';
+    Result := def;
+end;
+
+procedure TCefApplication.SetFrameworkDirPath(const aValue: ustring);
+begin
+  FFrameworkDirPath := checkAndSetPath(aValue, FFrameworkDirPath);
+end;
+
+procedure TCefApplication.SetResourcesDirPath(const aValue : ustring);
+begin
+  FResourcesDirPath := checkAndSetPath(aValue, FResourcesDirPath);
 end;
 
 procedure TCefApplication.SetLocalesDirPath(const aValue : ustring);
-var
-  TempPath : string;
 begin
-  if (length(aValue) > 0) then
-    begin
-      if CustomPathIsRelative(aValue) then
-        TempPath := GetModulePath + aValue
-       else
-        TempPath := aValue;
-
-      if DirectoryExists(TempPath) then
-        FLocalesDirPath := TempPath
-       else
-        FLocalesDirPath := '';
-    end
-   else
-    FLocalesDirPath := '';
+  FLocalesDirPath := checkAndSetPath(aValue, FLocalesDirPath);
 end;
 
 function TCefApplication.CheckCEFLibrary : boolean;
@@ -650,7 +651,7 @@ begin
     Result := True
    else
     begin
-      TempMissingFrm := not(CheckDLLs('', FMissingLibFiles));
+      TempMissingFrm := not(CheckDLLs(FFrameworkDirPath, FMissingLibFiles));
       TempMissingRsc := not(CheckResources(FResourcesDirPath, FMissingLibFiles, FCheckDevToolsResources));
       TempMissingLoc := not(CheckLocales(FLocalesDirPath, FMissingLibFiles, FLocalesRequired));
 
