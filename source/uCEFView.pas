@@ -16,7 +16,7 @@ uses
   {$ELSE}
   SysUtils, Classes, Windows, Messages, Controls, Graphics, Forms,
   {$ENDIF}
-  Generics.Collections, Generics.Defaults,
+  ShlObj, ActiveX, Generics.Collections, Generics.Defaults,
   uCEFMiscFunctions, uCEFChromium, uCEFWindowParent, uCEFInterfaces, uCEFApplication, uCEFTypes, uCEFConstants;
 
 const
@@ -121,7 +121,7 @@ type
     procedure BeforeDestruction; override;
   end;
 
-procedure CreateGlobalCEFApp;
+function SearchCEFHome(const pathList: TStrings = nil): Boolean;
 
 implementation
 
@@ -142,11 +142,22 @@ begin
   valueLen := Windows.GetEnvironmentVariable(PChar(name), nil, 0);
   if valueLen = 0 then
     Result := ''
-  else
-  begin
+  else begin
     SetLength(Result, valueLen - 1);
     Windows.GetEnvironmentVariable(PChar(name), PChar(Result), valueLen);
   end;
+end;
+
+function GetEnvPath: TStringList;
+var
+  pathList: string;
+begin
+  Result := TStringList.Create;
+  Result.CaseSensitive := False;
+  Result.delimiter := ';';
+  Result.StrictDelimiter := True;
+  pathList := GetEnvVar('PATH');
+  Result.DelimitedText := pathList;
 end;
 
 function SetEnvVar(const name, value: string): Boolean;
@@ -168,13 +179,8 @@ begin
     else
       dir2 := dir + '\';
 
-    strs := TStringList.Create;
+    strs := GetEnvPath;
     try
-      strs.CaseSensitive := False;
-      strs.delimiter := ';';
-      strs.StrictDelimiter := True;
-      pathList := GetEnvVar('PATH');
-      strs.DelimitedText := pathList;
       if (strs.IndexOf(dir) = -1) and (strs.IndexOf(dir2) = -1) then
         Result := SetEnvVar('PATH', dir + ';' + pathList)
       else
@@ -185,37 +191,7 @@ begin
   end;
 end;
 
-procedure FindCefLibDir;
-var
-  exeDir, filter, missingFiles: string;
-begin
-  exeDir := ExtractFilePath(ParamStr(0));
-  if FileExists(exeDir + LIBCEF_DLL) then Exit;
-
-  filter := exeDir + IntToStr(CEF_SUPPORTED_VERSION_MAJOR) + '.' + IntToStr(CEF_SUPPORTED_VERSION_MINOR)
-    + '.' + IntToStr(CEF_SUPPORTED_VERSION_RELEASE) + '\';
-
-  if DirectoryExists(filter) then
-  begin
-    if not CheckDLLs(filter, missingFiles) or not CheckLocales(filter + 'locales', missingFiles, GlobalCEFApp.LocalesRequired)
-      or not CheckResources(filter, missingFiles, False) then
-    begin
-      if (SizeOf(Pointer)=4) and (DirectoryExists(filter + 'Win32'))  then
-        filter := filter + 'Win32\'
-      else if (SizeOf(Pointer)=8) and (DirectoryExists(filter + 'Win64'))  then
-        filter := filter + 'Win64\';
-      if not CheckDLLs(filter, missingFiles) or not CheckLocales(filter + 'locales', missingFiles, GlobalCEFApp.LocalesRequired)
-        or not CheckResources(filter, missingFiles, False) then Exit;
-    end;
-
-    EnvPathAdd(filter);
-    GlobalCEFApp.FrameworkDirPath := filter;
-    GlobalCEFApp.ResourcesDirPath := filter;
-    GlobalCEFApp.LocalesDirPath := filter + 'locales';
-  end;
-end;
-
-procedure GlobalCEFApp_OnContextInitialized;
+procedure OnCEFLibraryInitialized;
 var
   cefrm: TCefFormBase;
   i: Integer;
@@ -231,13 +207,110 @@ begin
   end;
 end;
 
-procedure CreateGlobalCEFApp;
+function IsValidCEFHome(const CefHome: string): Boolean;
+var
+  root, localeDir, missingFiles: string;
 begin
-  GlobalCEFApp := TCefApplication.Create;
-  GlobalCEFApp.CheckCEFFiles := False;
-  GlobalCEFApp.LocalesRequired := 'en-US,zh-CN,zh-TW';
-  FindCefLibDir;
-  GlobalCEFApp.OnContextInitialized := GlobalCEFApp_OnContextInitialized;
+  Result := False;
+  if DirectoryExists(CefHome) then
+  begin
+    root := IncludeTrailingPathDelimiter(CefHome);
+    localeDir := root + 'locales\';
+    if CheckDLLs(root, missingFiles) and
+      CheckLocales(localeDir, missingFiles, GlobalCEFApp.LocalesRequired)
+      and CheckResources(root, missingFiles, False) then
+    begin
+      if not SameText(ExtractFilePath(ParamStr(0)), root) then
+        EnvPathAdd(root);
+      GlobalCEFApp.FrameworkDirPath := root;
+      GlobalCEFApp.ResourcesDirPath := root;
+      GlobalCEFApp.LocalesDirPath := localeDir;
+      Result := True;
+    end;
+  end;
+end;
+
+function IsValidCEFHomeEx(const CefHome: string): Boolean;
+var
+  root, version: string;
+begin
+  version := IntToStr(CEF_SUPPORTED_VERSION_MAJOR) + '.' + IntToStr(CEF_SUPPORTED_VERSION_MINOR)
+    + '.' + IntToStr(CEF_SUPPORTED_VERSION_RELEASE) + '\';
+  root := IncludeTrailingPathDelimiter(CefHome);
+  if IsValidCEFHome(root) then Exit(True);
+  if IsValidCEFHome(root+version) then Exit(True);
+  if SizeOf(Pointer)=4 then
+  begin
+    if IsValidCEFHome(root+'WIN32\') then Exit(True);
+    if IsValidCEFHome(root+version+'WIN32\') then Exit(True);
+  end
+  else begin
+    if IsValidCEFHome(root+'WIN64\') then Exit(True);
+    if IsValidCEFHome(root+version+'WIN64\') then Exit(True);
+  end;
+  Result := False;
+end;
+
+type
+  TSpecialFolderID = (sfiDesktop = $0000, sfiInternet = $0001, sfiPrograms = $0002, sfiControls = $0003,
+    sfiPrinters = $0004, sfiPersonal = $0005, sfiFavorites = $0006, sfiStartup = $0007, sfiRecent = $0008,
+    sfiSentTo = $0009, sfiBitBucket = $000A, sfiStartMenu = $000B, sfiMyDocuments = $000C, sfiMyMusic = $000D,
+    sfiMyVideo = $000E, sfiDesktopDirectory = $0010, sfiDrivers = $0011, sfiNetwork = $0012, sfiNethood = $0013,
+    sfiFonts = $0014, sfiTemplates = $0015, sfiCommonStartMenu = $0016, sfiCommonPrograms = $0017,
+    sfiCommonStartup = $0018, sfiCommonDesktopDirectory = $0019, sfiAppData = $001A, sfiPrintHood = $001B,
+    sfiLocalAppData = $001C, sfiAltStartup = $001D, sfiCommonAltStartup = $001E, sfiCommonFavorites = $001F,
+    sfiINTERNET_CACHE = $0020, sfiCookies = $0021, sfiHistory = $0022, sfiCommonAppData = $0023, sfiWindows = $0024,
+    sfiSystem = $0025, sfiProgramFiles = $0026, sfiMyPictures = $0027, sfiProfile = $0028, sfiSystemX86 = $0029,
+    sfiProgramFilesX86 = $002A, sfiProgramFilesCommon = $002B, sfiProgramFilesCommonX86 = $002C,
+    sfiCommonTemplates = $002D, sfiCommonDocuments = $002E, sfiCommonAdminTools = $002F, sfiAdminTools = $0030,
+    sfiConnections = $0031, sfiCommonMusic = $0035, sfiCommonPictures = $0036, sfiCommonVideo = $0037,
+    sfiResources = $0038, sfiResourcesLocalized = $0039, sfiCommonOemLinks = $003A, sfiCDBurnArea = $003B,
+    sfiComputersNearMe = $003D, sfiProfiles = $003E);
+
+function SHGetSpecialFolderPath(FolderID: TSpecialFolderID): string;
+var
+  pidl: PItemIDList;
+  buf: array [0 .. MAX_PATH] of Char;
+begin
+  Result := '';
+
+  if SUCCEEDED(SHGetSpecialFolderLocation(0, Ord(FolderID), pidl)) then
+  begin
+    if SHGetPathFromIDList(pidl, buf) then
+      Result := StrPas(buf);
+
+    CoTaskMemFree(pidl);
+  end;
+end;
+
+function SearchCEFHome(const pathList: TStrings): Boolean;
+var
+  i: Integer;
+  envPathList: TStringList;
+begin
+  GlobalCEFApp.OnContextInitialized := OnCEFLibraryInitialized;
+  if IsValidCEFHomeEx(ExtractFilePath(ParamStr(0))) then
+    Exit(True);
+
+  if IsValidCEFHomeEx(IncludeTrailingPathDelimiter(SHGetSpecialFolderPath(sfiAppData)) + 'CEF') then
+    Exit(True);
+
+  if pathList <> nil then
+  begin
+    for i := 0 to pathList.Count - 1 do
+      if IsValidCEFHomeEx(pathList[i]) then
+        Exit(True);
+  end;
+
+  envPathList := GetEnvPath;
+  try
+    for i := 0 to envPathList.Count - 1 do
+      if IsValidCEFHomeEx(envPathList[i]) then
+        Exit(True);
+  finally
+    envPathList.Free;
+  end;
+  Result := False;
 end;
 
 { TCEFView }

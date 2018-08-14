@@ -337,9 +337,7 @@ type
       property OnProcessMessageReceived          : TOnProcessMessageReceivedEvent      read FOnProcessMessageReceived          write FOnProcessMessageReceived;
   end;
 
-var
-  GlobalCEFApp : TCefApplication = nil;
-
+function GlobalCEFApp: TCefApplication;
 procedure DestroyGlobalCEFApp;
 
 implementation
@@ -353,9 +351,23 @@ uses
   uCEFLibFunctions, uCEFMiscFunctions, uCEFCommandLine, uCEFConstants,
   uCEFSchemeHandlerFactory, uCEFCookieManager, uCEFApp;
 
+var
+  _GlobalCEFApp : TCefApplication = nil;
+
+function GlobalCEFApp: TCefApplication;
+begin
+  if _GlobalCEFApp = nil then
+  begin
+    _GlobalCEFApp := TCefApplication.Create;
+    _GlobalCEFApp.LocalesRequired := 'en-US,zh-CN,zh-TW';
+  end;
+  Result := _GlobalCEFApp;
+end;
+
 procedure DestroyGlobalCEFApp;
 begin
-  if (GlobalCEFApp <> nil) then FreeAndNil(GlobalCEFApp);
+  if (_GlobalCEFApp <> nil) then
+    FreeAndNil(_GlobalCEFApp);
 end;
 
 constructor TCefApplication.Create;
@@ -1814,5 +1826,10 @@ begin
             assigned(cef_trace_event_async_step_past) and
             assigned(cef_trace_event_async_end);
 end;
+
+initialization
+
+finalization
+  DestroyGlobalCEFApp;
 
 end.
